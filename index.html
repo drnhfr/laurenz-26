@@ -11,17 +11,18 @@
     /* ─── TOKENS ─────────────────────────────────────────── */
     :root {
       --bg:         #09100b;
-      --bg2:        #0e1710;
+      --bg2:        #0f1812;
       --bg3:        #141f14;
-      --cream:      #ede5cf;
-      --cream-dim:  #a89e87;
-      --gold:       #c9a45e;
-      --gold-dim:   rgba(201,164,94,0.25);
-      --sage:       #4e7c44;
-      --sage-dim:   rgba(78,124,68,0.15);
-      --stone:      #6a5e4a;
-      --stone-dim:  rgba(106,94,74,0.25);
-      --error:      #8b3535;
+      --cream:      #efe6cf;
+      --cream-dim:  #c5b39a;
+      --gold:       #d9b16a;
+      --gold-soft:  rgba(217,177,106,0.55);
+      --gold-dim:   rgba(217,177,106,0.40);
+      --sage:       #7aa86a;
+      --sage-dim:   rgba(122,168,106,0.22);
+      --stone:      #9a8e74;
+      --stone-dim:  rgba(154,142,116,0.35);
+      --error:      #b04545;
 
       --display:  'Cormorant Garamond', Georgia, serif;
       --body:     'Crimson Pro', Georgia, serif;
@@ -179,7 +180,7 @@
       font-size: 0.5rem;
       letter-spacing: 0.25em;
       color: var(--stone);
-      opacity: 0.45;
+      opacity: 0.75;
     }
 
     /* ─── MAIN ───────────────────────────────────────────── */
@@ -218,8 +219,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 50% 60%, rgba(78,124,68,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 30% at 50% 90%, rgba(201,164,94,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 60%, rgba(122,168,106,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 32% at 50% 92%, rgba(217,177,106,0.09) 0%, transparent 65%),
         var(--bg);
     }
     .hero-mtn {
@@ -508,7 +509,7 @@
       font-style: italic;
       font-weight: 300;
       color: var(--gold);
-      opacity: 0.5;
+      opacity: 0.7;
       line-height: 1;
       flex-shrink: 0;
     }
@@ -539,7 +540,9 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,164,94,0.03) 0%, transparent 70%);
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 0%, rgba(217,177,106,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(217,177,106,0.04) 0%, transparent 70%);
     }
     .menu-inner {
       max-width: 740px;
@@ -576,7 +579,7 @@
       width: 50px;
       height: 1px;
       background: var(--gold);
-      opacity: 0.35;
+      opacity: 0.6;
       margin: 0 auto 4rem;
     }
 
@@ -667,10 +670,11 @@
       position: relative;
       user-select: none;
     }
-    .date-card:hover { border-color: rgba(201,164,94,0.45); }
+    .date-card:hover { border-color: rgba(217,177,106,0.55); }
     .date-card.sel {
       border-color: var(--gold);
-      background: rgba(201,164,94,0.06);
+      background: rgba(217,177,106,0.10);
+      box-shadow: 0 0 0 1px rgba(217,177,106,0.18), 0 14px 36px -18px rgba(217,177,106,0.35);
     }
     .date-card.sel::after {
       content: '✓';
@@ -1011,8 +1015,8 @@
         <!-- End dot -->
         <circle class="elev-dot" id="elev-dot" cx="900" cy="5" r="3.5"/>
         <!-- Labels -->
-        <text x="4"   y="108" fill="rgba(106,94,74,0.55)" font-family="Space Mono,monospace" font-size="7.5">Frasdorf · 765m</text>
-        <text x="760" y="108" fill="rgba(106,94,74,0.55)" font-family="Space Mono,monospace" font-size="7.5">STUBN · 1.165m</text>
+        <text x="4"   y="108" fill="rgba(154,142,116,0.85)" font-family="Space Mono,monospace" font-size="7.5">Frasdorf · 765m</text>
+        <text x="760" y="108" fill="rgba(154,142,116,0.85)" font-family="Space Mono,monospace" font-size="7.5">STUBN · 1.165m</text>
       </svg>
     </div>
 
@@ -1022,7 +1026,7 @@
       nicht erlaubt. Das gehört zum Konzept: Wer zur STUBN will, muss sich die Ankunft verdienen.
     </p>
 
-    <a class="klink r" href="https://www.komoot.com/de-de/collection/frasdorf-stubn-wanderung" target="_blank" rel="noopener">
+    <a class="klink r" href="https://www.komoot.com/smarttour/4718109" target="_blank" rel="noopener">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.5"/>
         <path d="M8 12 h8 M15 9 l3 3 -3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
