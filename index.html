@@ -67,7 +67,7 @@
     }
     #lock.out {
       opacity: 0;
-      transform: translateY(-30px);
+      transform: translateY(-20px) scale(1.025);
       pointer-events: none;
     }
 
@@ -181,6 +181,115 @@
       letter-spacing: 0.25em;
       color: var(--stone);
       opacity: 0.75;
+    }
+
+    /* ─── UNLOCK SEQUENCE ────────────────────────────────── */
+    .lock-sunrise {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse 90% 55% at 50% 100%,
+        rgba(217,177,106,0.42) 0%,
+        rgba(217,177,106,0.12) 35%,
+        transparent 72%
+      );
+      opacity: 0;
+      transform: translateY(35%);
+      pointer-events: none;
+    }
+    .lock-sunrise.go { animation: sunriseUp 2.4s cubic-bezier(.2,.6,.3,1) forwards; }
+    @keyframes sunriseUp {
+      0%   { opacity: 0; transform: translateY(35%); }
+      45%  { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0.55; transform: translateY(-22%); }
+    }
+
+    .lock-input.ok {
+      border-bottom-color: var(--gold);
+      color: var(--gold);
+      transition: color 0.35s ease, border-bottom-color 0.35s ease;
+    }
+
+    .lock-ui.exit { animation: lockUiExit 0.7s cubic-bezier(.55,0,.65,1) forwards; }
+    @keyframes lockUiExit {
+      to { opacity: 0; transform: translateY(16px); }
+    }
+
+    .lock-big.glow { animation: bigGlow 2.4s cubic-bezier(.4,0,.2,1) forwards; }
+    @keyframes bigGlow {
+      0%   {
+        opacity: 0.09;
+        color: var(--cream);
+        text-shadow: none;
+        transform: scale(1);
+      }
+      38%  {
+        opacity: 0.6;
+        color: var(--gold);
+        text-shadow: 0 0 90px rgba(217,177,106,0.55), 0 0 24px rgba(217,177,106,0.35);
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 0;
+        color: var(--gold);
+        text-shadow: 0 0 140px rgba(217,177,106,0.18);
+        transform: scale(1.14);
+      }
+    }
+
+    .lock-found {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.4rem;
+      z-index: 5;
+      opacity: 0;
+      pointer-events: none;
+      padding: 0 2rem;
+      text-align: center;
+    }
+    .lock-found.in { animation: foundIn 1.7s cubic-bezier(.2,.6,.3,1) forwards; }
+    @keyframes foundIn {
+      0%   { opacity: 0; transform: translateY(22px) scale(0.94); }
+      22%  { opacity: 1; transform: translateY(0) scale(1); }
+      78%  { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-10px) scale(1.04); }
+    }
+    .found-stamp {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.7em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 0.6rem 1.9rem;
+      padding-right: calc(1.9rem - 0.7em);
+    }
+    .found-coords {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      color: var(--cream);
+      opacity: 0.78;
+    }
+    .found-name {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      font-style: italic;
+      color: var(--cream);
+      font-weight: 300;
+      line-height: 1.1;
+    }
+    .found-sub {
+      font-family: var(--mono);
+      font-size: 0.48rem;
+      letter-spacing: 0.5em;
+      color: var(--stone);
+      text-transform: uppercase;
+      margin-top: -0.4rem;
     }
 
     /* ─── MAIN ───────────────────────────────────────────── */
@@ -901,6 +1010,7 @@
 <!-- ══════════════════════════════════════════ LOCK ══ -->
 <div id="lock">
   <canvas id="starfield"></canvas>
+  <div class="lock-sunrise"></div>
 
   <!-- Mountain layers -->
   <svg class="lock-mountains" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
@@ -931,6 +1041,13 @@
       <button class="lock-btn" id="lock-go">Bestätigen →</button>
     </div>
     <div class="lock-whisper">Ein Geburtstaggeheimnis wartet hinter diesen Koordinaten.</div>
+  </div>
+
+  <div class="lock-found" aria-hidden="true">
+    <div class="found-stamp">Gefunden</div>
+    <div class="found-coords">47.776194° N &nbsp;·&nbsp; 12.292800° E</div>
+    <div class="found-name">Frasdorfer Hütte</div>
+    <div class="found-sub">1.165 m &nbsp;·&nbsp; Chiemgauer Alpen</div>
   </div>
 </div>
 
@@ -1299,19 +1416,130 @@ function norm(s) {
 }
 
 function tryUnlock() {
-  const val  = document.getElementById('coord-in').value;
-  const inp  = document.getElementById('coord-in');
-  if (norm(val) === ANSWER) {
-    document.getElementById('lock').classList.add('out');
-    setTimeout(() => {
-      document.getElementById('lock').style.display = 'none';
-      document.getElementById('main').classList.add('show');
-      initObservers();
-    }, 1100);
-  } else {
+  const val = document.getElementById('coord-in').value;
+  const inp = document.getElementById('coord-in');
+
+  if (norm(val) !== ANSWER) {
     inp.classList.add('err');
     setTimeout(() => inp.classList.remove('err'), 600);
+    return;
   }
+
+  const lock    = document.getElementById('lock');
+  const lockUI  = lock.querySelector('.lock-ui');
+  const lockBig = lock.querySelector('.lock-big');
+  const sunrise = lock.querySelector('.lock-sunrise');
+  const found   = lock.querySelector('.lock-found');
+  const goBtn   = document.getElementById('lock-go');
+
+  inp.blur();
+  inp.disabled = true;
+  goBtn.disabled = true;
+  inp.classList.add('ok');
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduced) {
+    setTimeout(() => {
+      lock.classList.add('out');
+      setTimeout(() => {
+        lock.style.display = 'none';
+        document.getElementById('main').classList.add('show');
+        initObservers();
+      }, 700);
+    }, 250);
+    return;
+  }
+
+  // T=300ms: world wakes up
+  setTimeout(() => {
+    lockUI.classList.add('exit');
+    sunrise.classList.add('go');
+    lockBig.classList.add('glow');
+    animateStars();
+  }, 300);
+
+  // T=900ms: GEFUNDEN card materialises
+  setTimeout(() => found.classList.add('in'), 900);
+
+  // T=2500ms: lock dissolves upward
+  setTimeout(() => lock.classList.add('out'), 2500);
+
+  // T=3300ms: main takes over
+  setTimeout(() => {
+    lock.style.display = 'none';
+    document.getElementById('main').classList.add('show');
+    initObservers();
+  }, 3300);
+}
+
+/* ─────────────────── UNLOCK STAR BURST ────────────── */
+function animateStars() {
+  const start = performance.now();
+  const duration = 1800;
+
+  const stars = [];
+  for (let i = 0; i < 220; i++) {
+    const x = pr(i * 127.1 + 3.14) * W;
+    const y = pr(i * 311.7 + 1.41) * H * 0.72;
+    const r = 0.3 + pr(i * 73.3) * 1.1;
+    const a = 0.18 + pr(i * 193.1) * 0.52;
+    const isShooter = pr(i * 41.7) > 0.93;        // ~7% become meteors
+    const angle = (pr(i * 33.7) - 0.5) * Math.PI * 0.45 + Math.PI * 0.55;
+    stars.push({ x, y, r, a, isShooter, angle });
+  }
+
+  function frame(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const fade = Math.max(0, 1 - t * 1.25);
+
+    ctx.clearRect(0, 0, W, H);
+
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+
+      if (s.isShooter && t > 0.08) {
+        const st = (t - 0.08) / 0.92;
+        const ease = st * st;
+        const trail = ease * 280;
+        const dx = Math.cos(s.angle) * trail;
+        const dy = Math.sin(s.angle) * trail;
+        const sa = (1 - st) * fade * s.a * 2.2;
+        if (sa < 0.01) continue;
+
+        const grd = ctx.createLinearGradient(s.x, s.y, s.x + dx, s.y + dy);
+        grd.addColorStop(0, 'transparent');
+        grd.addColorStop(0.6, `rgba(255,232,190,${sa * 0.35})`);
+        grd.addColorStop(1, `rgba(255,238,200,${sa})`);
+        ctx.strokeStyle = grd;
+        ctx.lineWidth = s.r * 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x + dx, s.y + dy);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(s.x + dx, s.y + dy, s.r * 2.4, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,238,200,${sa})`;
+        ctx.fill();
+      } else {
+        const pulse  = 1 + Math.sin(t * Math.PI) * 1.1;
+        const alpha  = s.a * (1 + Math.sin(t * Math.PI) * 0.65) * fade;
+        if (alpha < 0.01) continue;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232,222,200,${Math.min(1, alpha)})`;
+        ctx.fill();
+      }
+    }
+
+    if (t < 1) requestAnimationFrame(frame);
+  }
+
+  // Prevent the resize handler from re-painting static stars mid-burst
+  window.removeEventListener('resize', resize);
+  requestAnimationFrame(frame);
 }
 
 document.getElementById('lock-go').addEventListener('click', tryUnlock);
