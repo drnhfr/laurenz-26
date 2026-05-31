@@ -1326,12 +1326,6 @@
         <div class="d-month">Juli</div>
         <div class="d-year">2026</div>
       </div>
-      <div class="date-card r d4" data-label="Samstag, 25. Juli 2026" onclick="pickDate(this)">
-        <div class="d-day">Samstag</div>
-        <div class="d-num">25.</div>
-        <div class="d-month">Juli</div>
-        <div class="d-year">2026</div>
-      </div>
       <div class="date-card r d1" data-label="Samstag, 1. August 2026" onclick="pickDate(this)">
         <div class="d-day">Samstag</div>
         <div class="d-num">01.</div>
@@ -1608,6 +1602,7 @@ function pickDate(el) {
 function sendMail() {
   if (!chosen) return;
   const to   = 'moritz.dornhoefer@finn.com';
+  const cc   = encodeURIComponent('Julian Hasenclever <julian.hasenclever@gmail.com>');
   const subj = encodeURIComponent(`Stubn-Wanderung – Ich bin dabei! ${chosen}`);
   const body = encodeURIComponent(
 `Hallo Moritz und Julian,
@@ -1622,7 +1617,7 @@ Plan: Abfahrt so, dass wir gegen 12:00 Uhr an der STUBN ankommen (~50 Min. Gehze
 Bis dann oben,
 Laurenz`
   );
-  window.location.href = `mailto:${to}?subject=${subj}&body=${body}`;
+  window.location.href = `mailto:${to}?cc=${cc}&subject=${subj}&body=${body}`;
 }
 </script>
 </body>
